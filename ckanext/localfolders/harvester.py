@@ -11,13 +11,13 @@ import logging
 log = logging.getLogger(__name__)
 logFile = open("output.txt", "a")
 
-class EnacHarvester(HarvesterBase):
+class LocalFoldersHarvester(HarvesterBase):
 
   def info(self):
     return {
-      'name': 'enac',
-      'title': 'ENAC',
-      'description': 'Custom harvester for ENAC data'
+      'name': 'localfolders',
+      'title': 'LocalFolders',
+      'description': 'Custom harvester for local folders'
     }
 
   def validate_config(self, config):

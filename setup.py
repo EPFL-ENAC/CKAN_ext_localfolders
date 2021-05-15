@@ -4,9 +4,9 @@ import sys, os
 version = '0.1'
 
 setup(
-    name='ckanext-enac',
+    name='ckanext-localfolders',
     version=version,
-    description="ENAC Harvester for CKAN",
+    description="local folder Harvester for CKAN",
     long_description="",
     classifiers=[],
     keywords='',
@@ -22,6 +22,6 @@ setup(
     entry_points=\
     """
     [ckan.plugins]
-    enac_harvester=ckanext.enac.harvester:EnacHarvester
+    localfolders_harvester=ckanext.localfolders.harvester:LocalFoldersHarvester
     """,
 )
