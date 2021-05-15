@@ -5,6 +5,10 @@ from ckanext.harvest.model import HarvestObject
 from ckanext.harvest.interfaces import IHarvester
 from ckanext.harvest.harvesters import HarvesterBase
 
+from ckan import model
+from ckan.model import Session
+from ckan.logic import get_action
+
 import os
 import logging
 
@@ -34,7 +38,23 @@ class LocalFoldersHarvester(HarvesterBase):
     return ''
 
   def get_original_url(self, harvest_object_id):
-      raise NotImplementedError("Not implemented")
+    raise NotImplementedError("Not implemented")
+
+
+  def _get_owner():
+    context = {
+      'model': model,
+      'session': Session,
+      'user': 'sysadmin',
+      'ignore_auth': True,
+    }
+
+    source_dataset = get_action('package_show')(
+      context.copy(),
+      {'id': harvest_object.source.id}
+    )
+
+    return source_dataset.get('owner_org')
 
   def gather_stage(self, harvest_job):
     '''
@@ -82,7 +102,7 @@ class LocalFoldersHarvester(HarvesterBase):
 
         content = {
           "id" : str(root),
-          #"owner_org" : 'enac',
+          "owner_org" : self._get_owner(),
           "private" : False,
           "name" : str(root),
           "resources" : resources
