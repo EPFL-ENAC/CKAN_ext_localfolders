@@ -69,6 +69,8 @@ class LocalFoldersHarvester(HarvesterBase):
 
             resources.append({
               'name': str(sub_file),
+              #'resource_type': 'HTML',
+              #'format': 'HTML',
               'url': 'undefined'
             })
 
@@ -79,6 +81,7 @@ class LocalFoldersHarvester(HarvesterBase):
             "private" : False,
             "name" : str(cur_dir),
             "resources" : resources
+            "description" : "Test description"
           }
 
           obj = HarvestObject(guid=harvest_job.source.id+str(cur_dir),
