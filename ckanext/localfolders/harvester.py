@@ -40,22 +40,6 @@ class LocalFoldersHarvester(HarvesterBase):
   def get_original_url(self, harvest_object_id):
     raise NotImplementedError("Not implemented")
 
-
-  def _get_owner(self):
-    context = {
-      'model': model,
-      'session': Session,
-      'user': 'sysadmin',
-      'ignore_auth': True,
-    }
-
-    source_dataset = get_action('package_show')(
-      context.copy(),
-      {'id': harvest_object.source.id}
-    )
-
-    return source_dataset.get('owner_org')
-
   def gather_stage(self, harvest_job):
     '''
     The gather stage will receive a HarvestJob object and will be
@@ -102,7 +86,6 @@ class LocalFoldersHarvester(HarvesterBase):
 
         content = {
           "id" : str(root),
-          "owner_org" : self._get_owner(),
           "private" : False,
           "name" : str(root),
           "resources" : resources
@@ -118,8 +101,6 @@ class LocalFoldersHarvester(HarvesterBase):
 
     log.info("Gather stage finished")
     return objs_ids
-
-
 
   def fetch_stage(self, harvest_object):
     '''
@@ -141,6 +122,21 @@ class LocalFoldersHarvester(HarvesterBase):
     '''
     log.info("In fetch stage")
     return True
+
+  def _get_owner(self, harvest_object):
+    context = {
+      'model': model,
+      'session': Session,
+      'user': 'sysadmin',
+      'ignore_auth': True,
+    }
+
+    source_dataset = get_action('package_show')(
+      context.copy(),
+      {'id': harvest_object.source.id}
+    )
+
+    return source_dataset.get('owner_org')
 
   def import_stage(self, harvest_object):
     '''
@@ -172,7 +168,9 @@ class LocalFoldersHarvester(HarvesterBase):
     log.info("content" + str(harvest_object.content))
 
     package_dict = json.loads(harvest_object.content)
+    package_dict['owner_org'] = self._get_owner(harvest_object)
     result = self._create_or_update_package(package_dict, harvest_object, package_dict_form='package_show')
+    
     return result
 
 class NotImplementedError(Exception):
