@@ -14,6 +14,7 @@ import logging
 
 log = logging.getLogger(__name__)
 base_url = '/srv/app/data/harvest/'
+base_download_url = "download_url/"
 
 class LocalFoldersHarvester(HarvesterBase):
 
@@ -48,47 +49,47 @@ class LocalFoldersHarvester(HarvesterBase):
     '''
     full_url = base_url+harvest_job.source.url
 
-    log.info("Infos:")
-    log.info(harvest_job.source.__dict__)
+    #{'_sa_instance_state': , 'frequency': 'ALWAYS', 'user_id': '', 'active': True, 'created': datetime.datetime(2021, 5, 15, 22, 43, 30, 458741), 'description': '', 'url': 'dataset_1', 'next_run': None, 'publisher_id': '', 'type': 'localfolders', 'config': '', 'title': 'dataset_1_title', 'id': 'e613a12e-e216-4f79-90ad-ec71b100f501'}
 
     log.info("In gather stage: %s" % full_url)
     objs_ids = []
-    counter = 0
 
     for (root, dirs, files) in os.walk(full_url):
+      log.info("Harvest folder : "+str(root))
 
-      resources = []
+      for cur_dir in dirs:
+        log.info("New dataset : "+str(cur_dir))
 
-      log.info("Into folder : "+str(root))
+        resources = []
 
-      for file in files:
+        for (sub_root, sub_dirs, sub_files) in os.walk(full_url+"/"+cur_dir):
 
-        log.info("Added file : "+str(file))
+          for sub_file in sub_files:
+            log.info("Added file : "+str(sub_file))
 
-        resources.append({
-          'name': str(file),
-          'resource_type': 'HTML',
-          'format': 'HTML',
-          'url': 'undefined'
-        })
+            resources.append({
+              'name': str(sub_file),
+              'resource_type': 'HTML',
+              'format': 'HTML',
+              'url': 'undefined'
+            })
 
+        if(len(resources) > 0):
 
-      if(len(files) > 0):
+          content = {
+            "id" : harvest_job.source.id+str(cur_dir),
+            "private" : False,
+            "name" : str(cur_dir),
+            "resources" : resources
+          }
 
-        content = {
-          "id" : str(root),
-          "private" : False,
-          "name" : harvest_job.source.title,
-          "resources" : resources
-        }
+          obj = HarvestObject(guid=harvest_job.source.id+str(cur_dir),
+                              job=harvest_job,
+                              content=json.dumps(content))
+          obj.save()
+          objs_ids.append(obj.id)
 
-        obj = HarvestObject(guid=full_url+str(counter),
-                            job=harvest_job,
-                            content=json.dumps(content))
-        obj.save()
-        objs_ids.append(obj.id)
-
-        counter = counter + 1
+      break
 
     log.info("Gather stage finished")
     return objs_ids
