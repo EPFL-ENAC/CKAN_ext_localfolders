@@ -69,8 +69,6 @@ class LocalFoldersHarvester(HarvesterBase):
 
             resources.append({
               'name': str(sub_file),
-              'resource_type': 'HTML',
-              'format': 'HTML',
               'url': 'undefined'
             })
 
@@ -125,7 +123,6 @@ class LocalFoldersHarvester(HarvesterBase):
               need harvesting after all or False if there were errors.
     '''
     log.info("In import stage")
-    log.info("content" + str(harvest_object.content))
 
     package_dict = json.loads(harvest_object.content)
     package_dict['owner_org'] = self._get_owner(harvest_object)
