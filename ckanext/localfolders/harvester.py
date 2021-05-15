@@ -41,7 +41,7 @@ class LocalFoldersHarvester(HarvesterBase):
     raise NotImplementedError("Not implemented")
 
 
-  def _get_owner():
+  def _get_owner(self):
     context = {
       'model': model,
       'session': Session,
