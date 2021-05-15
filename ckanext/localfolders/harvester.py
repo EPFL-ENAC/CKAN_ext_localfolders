@@ -60,9 +60,6 @@ class LocalFoldersHarvester(HarvesterBase):
     objs_ids = []
     counter = 0
 
-    log.info("Root content: ")
-    log.info(str(os.listdir(harvest_job.source.url)))
-
     for (root, dirs, files) in os.walk(harvest_job.source.url):
 
       resources = []
@@ -85,7 +82,7 @@ class LocalFoldersHarvester(HarvesterBase):
 
         content = {
           "id" : str(root),
-          "owner_org" : 'enac',
+          #"owner_org" : 'enac',
           "private" : False,
           "name" : str(root),
           "resources" : resources
