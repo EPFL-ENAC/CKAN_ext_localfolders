@@ -60,8 +60,8 @@ class LocalFoldersHarvester(HarvesterBase):
     objs_ids = []
     counter = 0
 
-    log.info("Root content: " + str('/srv/app/data/harvest/'))
-    log.info("Root content 2: " + str(harvest_job.source.url))
+    log.info("Root content: ")
+    log.info(str(os.listdir(harvest_job.source.url)))
 
     for (root, dirs, files) in os.walk(harvest_job.source.url):
 
