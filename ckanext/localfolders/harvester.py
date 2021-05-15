@@ -42,6 +42,17 @@ class LocalFoldersHarvester(HarvesterBase):
   def get_original_url(self, harvest_object_id):
     raise NotImplementedError("Not implemented")
 
+  def _get_dataset_notes(self, root, dataset_name):
+    path = os.path.join(root, dataset_name)+".desc"
+
+    if(os.path.isfile(path)):
+      file = open(path, mode='r')
+      content = file.read()
+      file.close()
+      return content
+    else:
+      return ""
+
   def gather_stage(self, harvest_job):
     '''
     :param harvest_job: HarvestJob object
@@ -62,13 +73,13 @@ class LocalFoldersHarvester(HarvesterBase):
 
         resources = []
 
-        for (sub_root, sub_dirs, sub_files) in os.walk(full_url+"/"+cur_dir):
+        for (sub_root, sub_dirs, sub_files) in os.walk( os.path.join(full_url,cur_dir) ):
 
           for sub_file in sub_files:
             log.info("Added file : "+str(sub_file))
 
             resources.append({
-              'name': str(sub_file),
+              'name': sub_file,
               #'resource_type': 'HTML',
               #'format': 'HTML',
               'url': 'undefined'
@@ -79,9 +90,9 @@ class LocalFoldersHarvester(HarvesterBase):
           content = {
             "id" : harvest_job.source.id+str(cur_dir),
             "private" : False,
-            "name" : str(cur_dir),
+            "name" : cur_dir,
             "resources" : resources,
-            "description" : "Test description"
+            "notes" : self._get_dataset_notes(root, cur_dir)
           }
 
           obj = HarvestObject(guid=harvest_job.source.id+str(cur_dir),
