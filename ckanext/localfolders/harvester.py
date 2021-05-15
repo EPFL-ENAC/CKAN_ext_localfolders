@@ -80,7 +80,7 @@ class LocalFoldersHarvester(HarvesterBase):
             "id" : harvest_job.source.id+str(cur_dir),
             "private" : False,
             "name" : str(cur_dir),
-            "resources" : resources
+            "resources" : resources,
             "description" : "Test description"
           }
 
