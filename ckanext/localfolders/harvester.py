@@ -9,7 +9,6 @@ import os
 import logging
 
 log = logging.getLogger(__name__)
-logFile = open("output.txt", "a")
 
 class LocalFoldersHarvester(HarvesterBase):
 
@@ -57,10 +56,12 @@ class LocalFoldersHarvester(HarvesterBase):
     :param harvest_job: HarvestJob object
     :returns: A list of HarvestObject ids
     '''
-    logFile.write("In gather stage")
     log.info("In gather stage: %s" % harvest_job.source.url)
     objs_ids = []
     counter = 0
+
+    log.info("Root content: " + str('/srv/app/data/harvest/'))
+    log.info("Root content 2: " + str(harvest_job.source.url))
 
     for (root, dirs, files) in os.walk(harvest_job.source.url):
 
@@ -122,7 +123,6 @@ class LocalFoldersHarvester(HarvesterBase):
               all, False if not successful
     '''
     log.info("In fetch stage")
-    logFile.write("In fetch stage")
     return True
 
   def import_stage(self, harvest_object):
@@ -152,7 +152,6 @@ class LocalFoldersHarvester(HarvesterBase):
               need harvesting after all or False if there were errors.
     '''
     log.info("In import stage")
-    logFile.write("In import stage")
     log.info("content" + str(harvest_object.content))
 
     package_dict = json.loads(harvest_object.content)
