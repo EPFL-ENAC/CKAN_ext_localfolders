@@ -90,7 +90,7 @@ class LocalFoldersHarvester(HarvesterBase):
             content = {
               "id" : harvest_job.source.id+str(cur_dir),
               "private" : False,
-              "name" : (cur_dir+"/"+sub_root).replace('/', '_'),
+              "name" : (os.path.relpath(sub_root, root)).replace('/', '_'),
               "resources" : resources,
               "notes" : self._get_dataset_notes(root, cur_dir)
             }
