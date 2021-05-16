@@ -62,7 +62,7 @@ class LocalFoldersHarvester(HarvesterBase):
       for cur_dir in dirs:
 
         notes = self._get_dataset_notes(root, cur_dir)
-        metadata = self._get_dataset_metadata(root, cur_dir)
+        metadata = self._get_dataset_infos(root, cur_dir)
 
         for (sub_root, sub_dirs, sub_files) in os.walk( os.path.join(full_url,cur_dir) ):
 
