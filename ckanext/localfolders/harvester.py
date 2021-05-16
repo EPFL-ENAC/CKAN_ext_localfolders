@@ -72,7 +72,6 @@ class LocalFoldersHarvester(HarvesterBase):
           resources = []
 
           for sub_file in sub_files:
-            log.info("Added file : "+str(sub_file))
 
             resources.append({
               'name': sub_file,
