@@ -69,7 +69,6 @@ class LocalFoldersHarvester(HarvesterBase):
       log.info("Harvest folder : "+str(root))
 
       for cur_dir in dirs:
-        log.info("New dataset : "+str(cur_dir))
 
         for (sub_root, sub_dirs, sub_files) in os.walk( os.path.join(full_url,cur_dir) ):
 
@@ -86,16 +85,18 @@ class LocalFoldersHarvester(HarvesterBase):
             })
 
           if(len(resources) > 0):
+            name = (os.path.relpath(sub_root, root)).replace('/', '_')
+            log.info("New dataset : "+name)
 
             content = {
-              "id" : harvest_job.source.id+str(cur_dir),
+              "id" : harvest_job.source.id+name,
               "private" : False,
-              "name" : (os.path.relpath(sub_root, root)).replace('/', '_'),
+              "name" : name,
               "resources" : resources,
               "notes" : self._get_dataset_notes(root, cur_dir)
             }
 
-            obj = HarvestObject(guid=harvest_job.source.id+str(cur_dir),
+            obj = HarvestObject(guid=harvest_job.source.id+name,
                                 job=harvest_job,
                                 content=json.dumps(content))
             obj.save()
