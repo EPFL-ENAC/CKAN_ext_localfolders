@@ -71,9 +71,9 @@ class LocalFoldersHarvester(HarvesterBase):
       for cur_dir in dirs:
         log.info("New dataset : "+str(cur_dir))
 
-        resources = []
-
         for (sub_root, sub_dirs, sub_files) in os.walk( os.path.join(full_url,cur_dir) ):
+
+          resources = []
 
           for sub_file in sub_files:
             log.info("Added file : "+str(sub_file))
@@ -85,21 +85,21 @@ class LocalFoldersHarvester(HarvesterBase):
               'url': 'undefined'
             })
 
-        if(len(resources) > 0):
+          if(len(resources) > 0):
 
-          content = {
-            "id" : harvest_job.source.id+str(cur_dir),
-            "private" : False,
-            "name" : cur_dir,
-            "resources" : resources,
-            "notes" : self._get_dataset_notes(root, cur_dir)
-          }
+            content = {
+              "id" : harvest_job.source.id+str(cur_dir),
+              "private" : False,
+              "name" : (cur_dir+"/"+sub_root).replace('/', '_'),
+              "resources" : resources,
+              "notes" : self._get_dataset_notes(root, cur_dir)
+            }
 
-          obj = HarvestObject(guid=harvest_job.source.id+str(cur_dir),
-                              job=harvest_job,
-                              content=json.dumps(content))
-          obj.save()
-          objs_ids.append(obj.id)
+            obj = HarvestObject(guid=harvest_job.source.id+str(cur_dir),
+                                job=harvest_job,
+                                content=json.dumps(content))
+            obj.save()
+            objs_ids.append(obj.id)
 
       break
 
