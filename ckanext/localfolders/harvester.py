@@ -43,6 +43,12 @@ class LocalFoldersHarvester(HarvesterBase):
     try:
       with open(path) as file:
         data = json.load(file)
+
+      tags = []
+      for cur in data['tags']:
+        tags.append({"name" : cur})
+      
+      data['tags'] = tags
       return data
     except:
       return {}
@@ -65,7 +71,7 @@ class LocalFoldersHarvester(HarvesterBase):
         notes = self._get_dataset_notes(root, cur_dir)
         metadata = self._get_dataset_infos(root, cur_dir)
         log.info("DEBUG ")
-        log.info(str(metadata))
+        log.info(str(metadata['tags']))
 
         for (sub_root, sub_dirs, sub_files) in os.walk( os.path.join(full_url,cur_dir) ):
 
