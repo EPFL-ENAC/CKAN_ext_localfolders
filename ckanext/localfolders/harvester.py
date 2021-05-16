@@ -44,6 +44,7 @@ class LocalFoldersHarvester(HarvesterBase):
         data = json.load(json_file)
       return data
     except:
+      return {}
 
   def gather_stage(self, harvest_job):
     '''
