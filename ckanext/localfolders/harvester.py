@@ -30,12 +30,12 @@ class LocalFoldersHarvester(HarvesterBase):
   def get_original_url(self, harvest_object_id):
     raise NotImplementedError("Not implemented")
 
-  def _get_dataset_notes(self, root, dataset_name, download_path):
+  def _get_dataset_notes(self, root, dataset_name, base_download_url):
     path = os.path.join(root, dataset_name)+".md"
     try:
       with open(path) as file:
         content = file.read()
-      result = Template(content).substitute(base_url = download_path)
+      result = Template(content).substitute(base_url = base_download_url)
       return result
     except:
       return ""
@@ -64,7 +64,6 @@ class LocalFoldersHarvester(HarvesterBase):
     '''
     objs_ids = []
     full_url = base_url+harvest_job.source.url
-    download_path = os.path.join(base_download_url, relative_path)
     log.info("In gather stage: %s" % full_url)
 
     for (root, dirs, files) in os.walk(full_url):
@@ -72,13 +71,14 @@ class LocalFoldersHarvester(HarvesterBase):
 
       for cur_dir in dirs:
 
-        notes = self._get_dataset_notes(root, cur_dir, download_path)
+        notes = self._get_dataset_notes(root, cur_dir, base_download_url)
         metadata = self._get_dataset_infos(root, cur_dir)
 
         for (sub_root, sub_dirs, sub_files) in os.walk( os.path.join(full_url,cur_dir) ):
 
           resources = []
           relative_path = os.path.relpath(sub_root, root)
+          download_path = os.path.join(base_download_url, relative_path)
 
           for sub_file in sub_files:
 
