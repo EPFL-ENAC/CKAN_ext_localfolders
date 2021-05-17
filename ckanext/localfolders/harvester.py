@@ -9,12 +9,14 @@ from ckan import model
 from ckan.model import Session
 from ckan.logic import get_action
 
+from string import Template
+
 import os
 import logging
 
 log = logging.getLogger(__name__)
 base_url = '/srv/app/data/harvest/'
-base_download_url = "127.0.0.1:8080/"
+base_download_url = "http://127.0.0.1:8080/"
 
 class LocalFoldersHarvester(HarvesterBase):
 
@@ -28,12 +30,13 @@ class LocalFoldersHarvester(HarvesterBase):
   def get_original_url(self, harvest_object_id):
     raise NotImplementedError("Not implemented")
 
-  def _get_dataset_notes(self, root, dataset_name):
+  def _get_dataset_notes(self, root, dataset_name, download_path):
     path = os.path.join(root, dataset_name)+".md"
     try:
       with open(path) as file:
         content = file.read()
-      return content
+      result = Template(content).substitute(base_url = download_path)
+      return result
     except:
       return ""
 
@@ -61,6 +64,7 @@ class LocalFoldersHarvester(HarvesterBase):
     '''
     objs_ids = []
     full_url = base_url+harvest_job.source.url
+    download_path = os.path.join(base_download_url, relative_path)
     log.info("In gather stage: %s" % full_url)
 
     for (root, dirs, files) in os.walk(full_url):
@@ -68,7 +72,7 @@ class LocalFoldersHarvester(HarvesterBase):
 
       for cur_dir in dirs:
 
-        notes = self._get_dataset_notes(root, cur_dir)
+        notes = self._get_dataset_notes(root, cur_dir, download_path)
         metadata = self._get_dataset_infos(root, cur_dir)
 
         for (sub_root, sub_dirs, sub_files) in os.walk( os.path.join(full_url,cur_dir) ):
@@ -82,7 +86,7 @@ class LocalFoldersHarvester(HarvesterBase):
               'name': sub_file,
               #'resource_type': 'HTML',
               #'format': 'HTML',
-              'url': os.path.join(base_download_url, relative_path, sub_file)
+              'url': os.path.join(download_path, sub_file)
             })
 
           if(len(resources) > 0):
