@@ -14,7 +14,7 @@ import logging
 
 log = logging.getLogger(__name__)
 base_url = '/srv/app/data/harvest/'
-base_download_url = "download_url/"
+base_download_url = "127.0.0.1:8080/"
 
 class LocalFoldersHarvester(HarvesterBase):
 
@@ -70,12 +70,11 @@ class LocalFoldersHarvester(HarvesterBase):
 
         notes = self._get_dataset_notes(root, cur_dir)
         metadata = self._get_dataset_infos(root, cur_dir)
-        log.info("DEBUG ")
-        log.info(str(metadata['tags']))
 
         for (sub_root, sub_dirs, sub_files) in os.walk( os.path.join(full_url,cur_dir) ):
 
           resources = []
+          relative_path = os.path.relpath(sub_root, root)
 
           for sub_file in sub_files:
 
@@ -83,11 +82,11 @@ class LocalFoldersHarvester(HarvesterBase):
               'name': sub_file,
               #'resource_type': 'HTML',
               #'format': 'HTML',
-              'url': 'undefined'
+              'url': os.path.join(base_download_url, relative_path, sub_file)
             })
 
           if(len(resources) > 0):
-            name = (os.path.relpath(sub_root, root)).replace('/', '_')
+            name = relative_path.replace('/', '_')
             log.info("New dataset : "+name)
 
             content = {
