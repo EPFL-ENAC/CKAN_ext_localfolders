@@ -76,7 +76,8 @@ class LocalFoldersHarvester(HarvesterBase):
 
         log.info("Searching data in : "+str(os.path.join(root, cur_dir)))
 
-        if cur_dir == "data":
+        if os.path.isdir(os.path.join(root, cur_dir, "data")):
+          cur_dir = os.path.join(cur_dir, "data")
 
           for (sub_root, sub_dirs, sub_files) in os.walk( os.path.join(full_url,cur_dir) ):
 
