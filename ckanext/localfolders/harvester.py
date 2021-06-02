@@ -31,17 +31,17 @@ class LocalFoldersHarvester(HarvesterBase):
     raise NotImplementedError("Not implemented")
 
   def _get_dataset_notes(self, root, dataset_name, base_download_url):
-    path = os.path.join(root, dataset_name)+".md"
+    path = os.path.join(root, dataset_name, dataset_name)+".md"
     try:
       with open(path) as file:
         content = file.read()
-      result = Template(content).substitute(base_url = base_download_url)
+      result = Template(content).substitute(base_url = os.path.join(base_download_url,dataset_name))
       return result
     except:
       return ""
 
   def _get_dataset_infos(self, root, dataset_name):
-    path = os.path.join(root, dataset_name)+".json"
+    path = os.path.join(root, dataset_name, dataset_name)+".json"
     log.info("Looking for infos in file  %s" % path)
     try:
       with open(path) as file:
@@ -74,39 +74,41 @@ class LocalFoldersHarvester(HarvesterBase):
         notes = self._get_dataset_notes(root, cur_dir, base_download_url)
         metadata = self._get_dataset_infos(root, cur_dir)
 
-        for (sub_root, sub_dirs, sub_files) in os.walk( os.path.join(full_url,cur_dir) ):
+        if cur_dir == "data":
 
-          resources = []
-          relative_path = os.path.relpath(sub_root, root)
-          download_path = os.path.join(base_download_url, relative_path)
+          for (sub_root, sub_dirs, sub_files) in os.walk( os.path.join(full_url,cur_dir) ):
 
-          for sub_file in sub_files:
+            resources = []
+            relative_path = os.path.relpath(sub_root, root)
+            download_path = os.path.join(base_download_url, relative_path)
 
-            resources.append({
-              'name': sub_file,
-              #'resource_type': 'HTML',
-              #'format': 'HTML',
-              'url': os.path.join(download_path, sub_file)
-            })
+            for sub_file in sub_files:
 
-          if(len(resources) > 0):
-            name = relative_path.replace('/', '_')
-            log.info("New dataset : "+name)
+              resources.append({
+                'name': sub_file,
+                #'resource_type': 'HTML',
+                #'format': 'HTML',
+                'url': os.path.join(download_path, sub_file)
+              })
 
-            content = {
-              "id" : harvest_job.source.id+name,
-              "private" : False,
-              "name" : name,
-              "resources" : resources,
-              "notes" : notes,
-              "tags" : metadata['tags']
-            }
+            if(len(resources) > 0):
+              name = relative_path.replace('/', '_')
+              log.info("New dataset : "+name)
 
-            obj = HarvestObject(guid=harvest_job.source.id+name,
-                                job=harvest_job,
-                                content=json.dumps(content))
-            obj.save()
-            objs_ids.append(obj.id)
+              content = {
+                "id" : harvest_job.source.id+name,
+                "private" : False,
+                "name" : name,
+                "resources" : resources,
+                "notes" : notes,
+                "tags" : metadata['tags']
+              }
+
+              obj = HarvestObject(guid=harvest_job.source.id+name,
+                                  job=harvest_job,
+                                  content=json.dumps(content))
+              obj.save()
+              objs_ids.append(obj.id)
 
       break
 
