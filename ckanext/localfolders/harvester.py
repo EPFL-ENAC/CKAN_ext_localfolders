@@ -71,15 +71,13 @@ class LocalFoldersHarvester(HarvesterBase):
 
       for cur_dir in dirs:
 
-        notes = self._get_dataset_notes(root, cur_dir, base_download_url)
-        metadata = self._get_dataset_infos(root, cur_dir)
-
-        log.info("Searching data in : "+str(os.path.join(root, cur_dir)))
-
         if os.path.isdir(os.path.join(root, cur_dir, "data")):
-          cur_dir = os.path.join(cur_dir, "data")
+          log.info("Found dataset in : "+str(os.path.join(root, cur_dir)))
 
-          for (sub_root, sub_dirs, sub_files) in os.walk( os.path.join(full_url,cur_dir) ):
+          notes = self._get_dataset_notes(root, cur_dir, base_download_url)
+          metadata = self._get_dataset_infos(root, cur_dir)
+
+          for (sub_root, sub_dirs, sub_files) in os.walk( os.path.join(full_url,cur_dir,"data") ):
 
             resources = []
             relative_path = os.path.relpath(sub_root, root)
@@ -89,8 +87,6 @@ class LocalFoldersHarvester(HarvesterBase):
 
               resources.append({
                 'name': sub_file,
-                #'resource_type': 'HTML',
-                #'format': 'HTML',
                 'url': os.path.join(download_path, sub_file)
               })
 
