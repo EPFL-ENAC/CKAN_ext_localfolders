@@ -17,7 +17,7 @@ import logging
 
 log = logging.getLogger(__name__)
 base_url = '/srv/app/data/harvest/'
-base_download_url = '://'.join(get_site_protocol_and_host())+":8080"
+base_download_url = '://'.join(get_site_protocol_and_host())[:-5]+":8080"
 #base_download_url = "127.0.0.1:8080"
 
 class LocalFoldersHarvester(HarvesterBase):
