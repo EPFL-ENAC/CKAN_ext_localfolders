@@ -66,7 +66,8 @@ class LocalFoldersHarvester(HarvesterBase):
     full_url = base_url+harvest_job.source.url
     log.info("In gather stage: %s" % full_url)
 
-    for (root, dirs, files) in os.walk(full_url):
+    for (root, dirs, files) in os.walk(full_url, topdown=True):
+      dirs[:] = [d for d in dirs if d not in set(['data'])]
       log.info("Harvest folder : "+str(root))
 
       for cur_dir in dirs:
@@ -108,8 +109,6 @@ class LocalFoldersHarvester(HarvesterBase):
                                   content=json.dumps(content))
               obj.save()
               objs_ids.append(obj.id)
-
-      break
 
     log.info("Gather stage finished")
     return objs_ids
