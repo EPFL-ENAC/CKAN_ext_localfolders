@@ -91,7 +91,7 @@ class LocalFoldersHarvester(HarvesterBase):
               })
 
             if(len(resources) > 0):
-              name = relative_path.replace('/', '_')
+              name = relative_path.replace('/data/', '/').replace('/', '_')
               log.info("New dataset : "+name)
 
               content = {
