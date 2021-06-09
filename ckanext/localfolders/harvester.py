@@ -81,7 +81,7 @@ class LocalFoldersHarvester(HarvesterBase):
           for (sub_root, sub_dirs, sub_files) in os.walk( os.path.join(root,cur_dir,"data") ):
 
             resources = []
-            relative_path = os.path.relpath(sub_root, root)
+            relative_path = os.path.relpath(sub_root, full_url)
             download_path = os.path.join(base_download_url, relative_path)
 
             for sub_file in sub_files:
