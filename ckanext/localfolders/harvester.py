@@ -1,6 +1,7 @@
  
 from ckan.plugins.core import SingletonPlugin, implements
 from ckan.lib.helpers import json
+from ckan.lib.helpers import get_site_protocol_and_host
 from ckanext.harvest.model import HarvestObject
 from ckanext.harvest.interfaces import IHarvester
 from ckanext.harvest.harvesters import HarvesterBase
@@ -16,7 +17,7 @@ import logging
 
 log = logging.getLogger(__name__)
 base_url = '/srv/app/data/harvest/'
-base_download_url = "http://127.0.0.1:8080/"
+base_download_url = '://'.join(get_site_protocol_and_host())+":8080"
 
 class LocalFoldersHarvester(HarvesterBase):
 
