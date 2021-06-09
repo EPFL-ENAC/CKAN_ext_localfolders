@@ -42,7 +42,6 @@ class LocalFoldersHarvester(HarvesterBase):
 
   def _get_dataset_infos(self, root, dataset_name):
     path = os.path.join(root, dataset_name, dataset_name)+".json"
-    log.info("Looking for infos in file  %s" % path)
     try:
       with open(path) as file:
         data = json.load(file)
@@ -78,7 +77,7 @@ class LocalFoldersHarvester(HarvesterBase):
           notes = self._get_dataset_notes(root, cur_dir, base_download_url)
           metadata = self._get_dataset_infos(root, cur_dir)
 
-          for (sub_root, sub_dirs, sub_files) in os.walk( os.path.join(full_url,cur_dir,"data") ):
+          for (sub_root, sub_dirs, sub_files) in os.walk( os.path.join(root,cur_dir,"data") ):
 
             resources = []
             relative_path = os.path.relpath(sub_root, root)
