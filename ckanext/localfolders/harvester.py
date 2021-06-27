@@ -44,18 +44,18 @@ class LocalFoldersHarvester(HarvesterBase):
 
   def _get_dataset_infos(self, root, dataset_name):
     path = os.path.join(root, dataset_name, dataset_name)+".json"
+    tags = []
     try:
       with open(path) as file:
         data = json.load(file)
 
-      tags = []
       for cur in data['tags']:
         tags.append({"name" : cur})
-      
-      data['tags'] = tags
-      return data
     except:
-      return {}
+      pass
+    
+    data['tags'] = tags
+    return data
 
   def gather_stage(self, harvest_job):
     '''
