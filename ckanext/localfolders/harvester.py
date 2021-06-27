@@ -44,6 +44,7 @@ class LocalFoldersHarvester(HarvesterBase):
 
   def _get_dataset_infos(self, root, dataset_name):
     path = os.path.join(root, dataset_name, dataset_name)+".json"
+    data = {}
     tags = []
     try:
       with open(path) as file:
@@ -53,7 +54,7 @@ class LocalFoldersHarvester(HarvesterBase):
         tags.append({"name" : cur})
     except:
       pass
-    
+
     data['tags'] = tags
     return data
 
