@@ -94,13 +94,15 @@ class LocalFoldersHarvester(HarvesterBase):
               })
 
             if(len(resources) > 0):
-              name = relative_path.replace('/data/', '/').replace('/', '_')
+              name = relative_path.replace('/data/', '/').replace('/', '_').replace('/data', '')
+              title = relative_path.replace('/data/', '/').replace('/', ' - ').replace('/data', '')
               log.info("New dataset : "+name)
 
               content = {
                 "id" : harvest_job.source.id+name,
                 "private" : False,
                 "name" : name,
+                "title" : title,
                 "resources" : resources,
                 "notes" : notes,
                 "tags" : metadata['tags']
