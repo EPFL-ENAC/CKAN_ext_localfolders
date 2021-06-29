@@ -37,7 +37,7 @@ class LocalFoldersHarvester(HarvesterBase):
     try:
       with open(path) as file:
         content = file.read()
-      result = Template(content).substitute(base_url = os.path.join(base_download_url,dataset_name))
+      result = Template(content).substitute(base_url = base_download_url)
       return result
     except:
       return ""
