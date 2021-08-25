@@ -11,13 +11,15 @@ from ckan.model import Session
 from ckan.logic import get_action
 
 from string import Template
+from urllib.parse import urlparse
 
 import os
 import logging
 
 log = logging.getLogger(__name__)
 base_url = '/srv/app/data/harvest/'
-base_download_url = '://'.join(get_site_protocol_and_host())[:-5]+":8080"
+ckan_url = urlparse('://'.join(get_site_protocol_and_host()))
+base_download_url = f'{ckan_url.scheme}://{ckan_url.hostname}:8443'
 #base_download_url = "127.0.0.1:8080"
 
 class LocalFoldersHarvester(HarvesterBase):
@@ -67,6 +69,7 @@ class LocalFoldersHarvester(HarvesterBase):
     objs_ids = []
     full_url = base_url+harvest_job.source.url
     log.info("In gather stage: %s" % full_url)
+    log.info(f'{base_url} -> {base_download_url}')
 
     for (root, dirs, files) in os.walk(full_url, topdown=True):
       dirs[:] = [d for d in dirs if d not in set(['data'])]
@@ -83,7 +86,7 @@ class LocalFoldersHarvester(HarvesterBase):
           for (sub_root, sub_dirs, sub_files) in os.walk( os.path.join(root,cur_dir,"data") ):
 
             resources = []
-            relative_path = os.path.relpath(sub_root, full_url)
+            relative_path = os.path.relpath(sub_root, base_url)
             download_path = os.path.join(base_download_url, relative_path)
 
             for sub_file in sub_files:
